@@ -1,3 +1,5 @@
+
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-public class Solve2 {
+public class Solve {
 	public static void main(String[] args) throws IOException{
 		String sql;
 		// 유저 ID
@@ -16,7 +18,6 @@ public class Solve2 {
 		// 문제 번호
 		int num = 0;
 		// 성공회대학교 학생목록
-		String solvedate = null;
 		Document doc = Jsoup.connect("https://solved.ac/ranking/o/309").get();
 		Elements name = doc.select("div[class=\"StickyTable__Cell-sc-45ty5n-1 bqklaG sticky-table-cell\"]");
 		// 21*6을 더해주면서 4개를 동시에 크롤링
@@ -24,14 +25,14 @@ public class Solve2 {
 		// 학생의 인원 수
 		int nick = 1;
 		// 21번씩 4번 반복하여 크롤링 시작
-		while(nick++ <= 1) {
+		while(nick++ <= 21) {
 			System.out.println(nick-1);
 			try {
 				java.sql.Statement st = null;
 				ResultSet rs = null;
 				Connection con = null;
 				// mysql 연결
-				con = DriverManager.getConnection("jdbc:mysql://13.124.13.173:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
+				con = DriverManager.getConnection("jdbc:mysql://54.180.82.36:3306/?serverTimezone=UTC&useSSL=false &allowPublicKeyRetrieval=true",
 						"Project", "testing00");
 				st = con.createStatement();
 				// database 선택
@@ -54,34 +55,28 @@ public class Solve2 {
 				for(int j = 0;j<(problem.size()/4)-1;j++) {
 					id = name.get(n).text();
 					num = Integer.parseInt(problem.get(p).text());
-					Document doc4 = Jsoup.connect("https://www.acmicpc.net/status?from_mine=1&problem_id="+num+"&user_id="+id).get();
-//					Elements a = doc4.select("td.result");
-					Elements time = doc4.select("div[class=\"table-responsive\"] td a");
-//					String[] times = a.text().split(" ");
-					solvedate = time.get(2).attr("title");
+					p+=4;
 					try {
-					sql = "update Solve set solvedate = ? where USER_ID = ? and PROBLEM_ID = ?";
+					sql = "insert into Solve(USER_ID, PROBLEM_ID) values(?, ?)";
 					PreparedStatement pst = con.prepareStatement(sql);
-					pst.setString(1, solvedate);
-					pst.setString(2, id);
-					pst.setInt(3, num);
+					pst.setString(1, id);
+					pst.setInt(2, num);
 					pst.execute();
 					pst.close();
 					}catch(Exception e) {
 						continue;
 					}
-					p+=4;
 						}
 					k++;
 					}
 				n+=6;
 				// 전체 데이터베이스 조회
-//				rs = st.executeQuery("select * from Solve;");
-//				while(rs.next()) {
-//					String idx = rs.getString("USER_ID");
-//					String pro = rs.getString("PROBLEM_ID");
-//					System.out.println(idx+" "+pro);
-//				}
+				rs = st.executeQuery("select * from Solve;");
+				while(rs.next()) {
+					String idx = rs.getString("USER_ID");
+					String pro = rs.getString("PROBLEM_ID");
+					System.out.println(idx+" "+pro);
+				}
 				}catch(Exception e) {
 					e.printStackTrace();
 				}

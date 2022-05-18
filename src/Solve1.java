@@ -55,7 +55,6 @@ public class Solve1 {
 				for(int j = 0;j<(problem.size()/4)-1;j++) {
 					id = name.get(n).text();
 					num = Integer.parseInt(problem.get(p).text());
-					p+=4;
 					try {
 					sql = "insert into Solve(USER_ID, PROBLEM_ID) values(?, ?)";
 					PreparedStatement pst = con.prepareStatement(sql);
@@ -66,6 +65,7 @@ public class Solve1 {
 					}catch(Exception e) {
 						continue;
 					}
+					p+=4;
 						}
 					k++;
 					}
