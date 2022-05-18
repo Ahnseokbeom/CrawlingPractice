@@ -59,7 +59,7 @@ public class Solvedate {
 					Elements a = doc4.select("td");
 					int a1 = 3;
 					for(int sol = 0;sol<a.size()-1;sol++) {
-						if(a.get(a1).text().equals("맞았습니다!!") || a.get(a1).text().equals(a.get(a1).text().replaceAll("^[0-9]점", ""))) {
+						if(a.get(a1).text().equals("맞았습니다!!") || a.get(a1).text().equals(a.get(a1).text().replaceAll("^[0-9]*$점", ""))) {
 							System.out.println(num);
 							Elements time = doc4.select("tr#solution-"+a.get(a1-3).text()+" a");
 							solvedate = time.get(time.size()-1).attr("title");
